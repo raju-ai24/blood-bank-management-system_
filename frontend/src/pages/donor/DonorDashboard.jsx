@@ -23,10 +23,12 @@ import {
   Bell
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "https://blood-bank-management-system-backend-r7cp.onrender.com/api/donor";
 
 const DonorDashboard = () => {
+  const navigate = useNavigate();
   const [dashboard, setDashboard] = useState(null);
   const [donor, setDonor] = useState(null);
   const [history, setHistory] = useState([]);
@@ -110,6 +112,93 @@ const DonorDashboard = () => {
     await fetchDashboardData();
     setRefreshing(false);
     toast.success("Dashboard updated");
+  };
+
+  const handleDownloadCertificate = () => {
+    if (history.length === 0) {
+      toast.error("No donation history to generate certificate");
+      return;
+    }
+    
+    // Generate certificate content
+    const certificateContent = `
+BLOOD DONATION CERTIFICATE
+
+This certificate is proudly presented to
+
+${donor?.fullName || 'Donor'}
+
+In recognition of their contribution to saving lives through blood donation.
+
+Total Donations: ${history.length}
+Blood Type: ${donor?.bloodGroup || 'N/A'}
+Latest Donation: ${history[0]?.donationDate ? new Date(history[0].donationDate).toLocaleDateString() : 'N/A'}
+
+Issued on: ${new Date().toLocaleDateString()}
+Blood Bank Management System
+    `.trim();
+
+    // Create and download the certificate
+    const blob = new Blob([certificateContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `blood-donation-certificate-${donor?.fullName?.replace(/\s+/g, '-') || 'donor'}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
+    toast.success("Certificate downloaded successfully!");
+  };
+
+  const handleShareAchievement = () => {
+    if (history.length === 0) {
+      toast.error("No achievements to share yet");
+      return;
+    }
+
+    const shareText = `I've donated blood ${history.length} time${history.length > 1 ? 's' : ''} and saved up to ${history.length * 3} lives! Join me in making a difference. #BloodDonation #SaveLives`;
+    
+    // Try to use Web Share API if available
+    if (navigator.share) {
+      navigator.share({
+        title: 'My Blood Donation Achievement',
+        text: shareText,
+        url: window.location.href
+      }).catch((error) => {
+        console.log('Share failed:', error);
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(shareText);
+        toast.success("Achievement copied to clipboard!");
+      });
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(shareText);
+      toast.success("Achievement copied to clipboard!");
+    }
+  };
+
+  const handleInviteFriends = () => {
+    const inviteText = `Join me in saving lives through blood donation! Sign up at ${window.location.origin} and become a hero today. Every donation can save up to 3 lives. #BloodDonation`;
+    
+    // Try to use Web Share API if available
+    if (navigator.share) {
+      navigator.share({
+        title: 'Join the Blood Donation Community',
+        text: inviteText,
+        url: window.location.origin
+      }).catch((error) => {
+        console.log('Share failed:', error);
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(inviteText);
+        toast.success("Invite link copied to clipboard!");
+      });
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(inviteText);
+      toast.success("Invite link copied to clipboard!");
+    }
   };
 
   useEffect(() => {
@@ -294,7 +383,7 @@ const DonorDashboard = () => {
               icon={<Droplet className="w-8 h-8" />}
               message="No donation history yet"
               actionText="Make your first donation"
-              onAction={() => toast.success("Find nearby blood camps to get started!")}
+              onAction={() => navigate("/donor/camps")}
             />
           )}
         </Section>
@@ -332,28 +421,28 @@ const DonorDashboard = () => {
             icon={<Download className="w-5 h-5" />}
             title="Download Certificate"
             description="Get your donation certificate"
-            onClick={() => toast.success("Certificate download started!")}
+            onClick={() => handleDownloadCertificate()}
             color="blue"
           />
           <ActionCard
             icon={<Share2 className="w-5 h-5" />}
             title="Share Achievement"
             description="Share your impact with others"
-            onClick={() => toast.success("Share your life-saving journey!")}
+            onClick={() => handleShareAchievement()}
             color="green"
           />
           <ActionCard
             icon={<Calendar className="w-5 h-5" />}
             title="Schedule Donation"
             description="Book your next donation"
-            onClick={() => toast.success("Find nearby blood donation camps!")}
+            onClick={() => navigate("/donor/camps")}
             color="red"
           />
           <ActionCard
             icon={<Users className="w-5 h-5" />}
             title="Invite Friends"
             description="Grow the donor community"
-            onClick={() => toast.success("Invite friends to become donors!")}
+            onClick={() => handleInviteFriends()}
             color="purple"
           />
         </div>
