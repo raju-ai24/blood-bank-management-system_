@@ -41,6 +41,14 @@ const HospitalRequestBlood = () => {
 
     try {
       const token = localStorage.getItem("token");
+      
+      if (!token) {
+        toast.error("Please login to request blood");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Submitting blood request:", form);
 
       const response = await axios.post(
         "https://blood-bank-management-system-backend-r7cp.onrender.com/api/hospital/blood/request",
@@ -48,12 +56,22 @@ const HospitalRequestBlood = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      console.log("Request response:", response.data);
       toast.success("Blood request sent successfully!");
       setForm({ labId: "", bloodType: "", units: "" });
-      console.log("Request sent:", response.data);
     } catch (err) {
       console.error("Submit request error:", err);
-      toast.error(err.response?.data?.message || "Failed to send request");
+      console.error("Error response:", err.response?.data);
+      
+      if (err.response?.status === 401) {
+        toast.error("Authentication failed. Please login again.");
+      } else if (err.response?.status === 404) {
+        toast.error("Blood lab not found or not approved");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response?.data?.message || "Invalid request data");
+      } else {
+        toast.error(err.response?.data?.message || err.message || "Failed to send request");
+      }
     }
     setLoading(false);
   };
