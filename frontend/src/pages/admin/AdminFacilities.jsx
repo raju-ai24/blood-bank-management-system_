@@ -156,14 +156,19 @@ const FacilityApproval = () => {
     }
   };
 
-  const handleViewDocument = (documentUrl, filename = "document") => {
+  const handleViewDocument = (documentUrl) => {
     if (!documentUrl) {
       toast.error("Document not available");
       return;
     }
     
     console.log("📄 Opening document:", documentUrl);
-    window.open(documentUrl, '_blank', 'noopener,noreferrer');
+    try {
+      window.open(documentUrl, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      console.error("Error opening document:", error);
+      toast.error("Failed to open document");
+    }
   };
 
   const handleDownloadDocument = (documentUrl, filename = "document") => {
@@ -173,13 +178,19 @@ const FacilityApproval = () => {
     }
 
     console.log("💾 Downloading document:", documentUrl);
-    const link = document.createElement('a');
-    link.href = documentUrl;
-    link.download = filename;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const link = document.createElement('a');
+      link.href = documentUrl;
+      link.download = filename;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Download started");
+    } catch (error) {
+      console.error("Error downloading document:", error);
+      toast.error("Failed to download document");
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -357,10 +368,10 @@ const FacilityApproval = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleViewDocument(
-                            facility.documents.registrationProof.url,
-                            facility.documents.registrationProof.filename
-                          );
+                          const docUrl = typeof facility.documents.registrationProof === 'string' 
+                            ? facility.documents.registrationProof 
+                            : facility.documents.registrationProof.url;
+                          handleViewDocument(docUrl);
                         }}
                         className="flex items-center gap-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors border border-gray-300"
                       >
@@ -370,10 +381,13 @@ const FacilityApproval = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDownloadDocument(
-                            facility.documents.registrationProof.url,
-                            facility.documents.registrationProof.filename
-                          );
+                          const docUrl = typeof facility.documents.registrationProof === 'string' 
+                            ? facility.documents.registrationProof 
+                            : facility.documents.registrationProof.url;
+                          const docFilename = typeof facility.documents.registrationProof === 'object' 
+                            ? facility.documents.registrationProof.filename 
+                            : 'document.pdf';
+                          handleDownloadDocument(docUrl, docFilename);
                         }}
                         className="flex items-center gap-1 px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors border border-blue-300"
                       >
