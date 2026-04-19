@@ -40,6 +40,23 @@ import hospitalRoutes from "./routes/hospitalRoutes.js";
 app.use("/api/hospital", hospitalRoutes);
 
 
+// 🏠 Root Route
+app.get("/", (req, res) => {
+  res.json({
+    message: "Blood Bank Management System API",
+    status: "running",
+    version: "1.0.0",
+    endpoints: {
+      auth: "/api/auth",
+      donor: "/api/donor",
+      facility: "/api/facility",
+      admin: "/api/admin",
+      bloodLab: "/api/blood-lab",
+      hospital: "/api/hospital"
+    }
+  });
+});
+
 // 🗄️ DB Connection
 mongoose
   .connect(process.env.MONGO_URI)
