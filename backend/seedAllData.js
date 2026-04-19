@@ -402,6 +402,71 @@ const seedAllData = async () => {
     }
     console.log(`✅ Seeded ${stockCount} blood stock entries`);
 
+    // ============ HOSPITAL BLOOD STOCK ============
+    console.log("\n🏥 Seeding Hospital Blood Stock...");
+    const hospitalBloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+    let hospitalStockCount = 0;
+
+    for (const hospital of approvedFacilities.filter(f => f.facilityType === "hospital")) {
+      for (const bloodGroup of hospitalBloodGroups) {
+        const existingHospitalStock = await Blood.findOne({
+          bloodGroup,
+          hospital: hospital._id
+        });
+
+        if (!existingHospitalStock) {
+          const quantity = Math.floor(Math.random() * 15) + 5; // 5-20 units
+          const expiryDate = new Date();
+          expiryDate.setDate(expiryDate.getDate() + 35); // 35 days from now
+
+          await Blood.create({
+            bloodGroup,
+            quantity,
+            expiryDate,
+            hospital: hospital._id
+          });
+          hospitalStockCount++;
+        }
+      }
+    }
+    console.log(`✅ Seeded ${hospitalStockCount} hospital blood stock entries`);
+
+    // ============ HOSPITAL HISTORY ============
+    console.log("\n📜 Seeding Hospital History...");
+    const hospitalFacilities = approvedFacilities.filter(f => f.facilityType === "hospital");
+    
+    for (const hospital of hospitalFacilities) {
+      const hospitalDoc = await Facility.findById(hospital._id);
+      if (hospitalDoc && hospitalDoc.history.length === 0) {
+        const historyEvents = [
+          {
+            eventType: "Stock Update",
+            description: "Initial blood stock inventory completed",
+            date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+          },
+          {
+            eventType: "Verification",
+            description: "Hospital registration approved by admin",
+            date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+          },
+          {
+            eventType: "Request Approved",
+            description: "Blood request for emergency surgery fulfilled",
+            date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+          },
+          {
+            eventType: "Profile Update",
+            description: "Hospital contact information updated",
+            date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+          }
+        ];
+
+        hospitalDoc.history = historyEvents;
+        await hospitalDoc.save();
+      }
+    }
+    console.log(`✅ Seeded hospital history events`);
+
     // ============ BLOOD REQUESTS ============
     console.log("\n📋 Seeding Blood Requests...");
     const sampleRequests = [
