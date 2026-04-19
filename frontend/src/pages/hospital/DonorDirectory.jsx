@@ -69,6 +69,7 @@ const DonorDirectory = () => {
 
   useEffect(() => {
     fetchDonors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, searchTerm]);
 
   // Contact donor
@@ -84,22 +85,13 @@ const DonorDirectory = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `https://blood-bank-management-system-backend-r7cp.onrender.com/api/hopital/donors/${donorId}/contact`,
+        `https://blood-bank-management-system-backend-r7cp.onrender.com/api/hospital/donors/${donorId}/contact`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (err) {
       console.error("Log contact error:", err);
     }
-  };
-
-  // Check donor availability
-  const isDonorAvailable = (lastDonationDate) => {
-    if (!lastDonationDate) return true;
-    const lastDonation = new Date(lastDonationDate);
-    const threeMonthsAgo = new Date();
-    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-    return lastDonation < threeMonthsAgo;
   };
 
   const getAvailabilityStatus = (lastDonationDate) => {
