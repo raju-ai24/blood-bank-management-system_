@@ -1,9 +1,10 @@
 services:
   - type: web
     name: blood-bank-frontend
-    env: node
+    env: static
     buildCommand: npm install && npm run build
-    startCommand: npm run preview
+    publishCommand: npm run build
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
         value: https://blood-bank-management-system-backend-r7cp.onrender.com
