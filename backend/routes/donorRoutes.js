@@ -1,5 +1,5 @@
 import express from "express";
-import { getDonorCamps, getDonorHistory, getDonorProfile, getDonorStats, updateDonorProfile } from "../controllers/donorController.js";
+import { getDonorCamps, getDonorHistory, getDonorProfile, getDonorStats, updateDonorProfile, generateCertificate, shareAchievement, inviteFriends } from "../controllers/donorController.js";
 import { protectDonor } from "../middlewares/donorMiddleware.js";
 
 
@@ -15,6 +15,11 @@ router.get("/history", protectDonor, getDonorHistory);
 
 router.get("/stats", protectDonor, getDonorStats);
 
+router.post("/certificate", protectDonor, generateCertificate);
+
+router.post("/share", protectDonor, shareAchievement);
+
+router.post("/invite", protectDonor, inviteFriends);
 
 
 export default router;

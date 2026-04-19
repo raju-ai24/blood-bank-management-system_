@@ -572,3 +572,124 @@ const addToBloodStock = async (labId, bloodType, quantity) => {
     console.error("Error adding to blood stock:", error);
   }
 };
+
+/**
+ * @desc Generate donation certificate
+ * @route POST /api/donor/certificate
+ * @access Private (Donor)
+ */
+export const generateCertificate = async (req, res) => {
+  try {
+    const donorId = req.donor?.id || req.donor?._id;
+    
+    const donor = await Donor.findById(donorId);
+    if (!donor) {
+      return res.status(404).json({ message: "Donor not found" });
+    }
+
+    if (donor.donationHistory.length === 0) {
+      return res.status(400).json({ message: "No donation history to generate certificate" });
+    }
+
+    // Generate certificate content
+    const certificateContent = `
+BLOOD DONATION CERTIFICATE
+
+This certificate is proudly presented to
+
+${donor.fullName}
+
+In recognition of their contribution to saving lives through blood donation.
+
+Total Donations: ${donor.donationHistory.length}
+Blood Type: ${donor.bloodGroup}
+Latest Donation: ${donor.lastDonationDate ? new Date(donor.lastDonationDate).toLocaleDateString() : 'N/A'}
+
+Issued on: ${new Date().toLocaleDateString()}
+Blood Bank Management System
+    `.trim();
+
+    res.status(200).json({
+      success: true,
+      certificate: certificateContent,
+      fileName: `blood-donation-certificate-${donor.fullName.replace(/\s+/g, '-')}.txt`
+    });
+  } catch (error) {
+    console.error("Generate certificate error:", error);
+    res.status(500).json({ message: "Error generating certificate" });
+  }
+};
+
+/**
+ * @desc Share achievement
+ * @route POST /api/donor/share
+ * @access Private (Donor)
+ */
+export const shareAchievement = async (req, res) => {
+  try {
+    const donorId = req.donor?.id || req.donor?._id;
+    
+    const donor = await Donor.findById(donorId);
+    if (!donor) {
+      return res.status(404).json({ message: "Donor not found" });
+    }
+
+    if (donor.donationHistory.length === 0) {
+      return res.status(400).json({ message: "No achievements to share yet" });
+    }
+
+    const shareText = `I've donated blood ${donor.donationHistory.length} time${donor.donationHistory.length > 1 ? 's' : ''} and saved up to ${donor.donationHistory.length * 3} lives! Join me in making a difference. #BloodDonation #SaveLives`;
+    const shareUrl = window?.location?.href || 'https://blood-bank-management-system-pawr.onrender.com';
+
+    // Track share count (optional - could be stored in donor document)
+    const shareCount = (donor.shareCount || 0) + 1;
+    donor.shareCount = shareCount;
+    await donor.save();
+
+    res.status(200).json({
+      success: true,
+      shareText,
+      shareUrl,
+      shareCount
+    });
+  } catch (error) {
+    console.error("Share achievement error:", error);
+    res.status(500).json({ message: "Error sharing achievement" });
+  }
+};
+
+/**
+ * @desc Invite friends
+ * @route POST /api/donor/invite
+ * @access Private (Donor)
+ */
+export const inviteFriends = async (req, res) => {
+  try {
+    const donorId = req.donor?.id || req.donor?._id;
+    const { emails } = req.body;
+    
+    const donor = await Donor.findById(donorId);
+    if (!donor) {
+      return res.status(404).json({ message: "Donor not found" });
+    }
+
+    const inviteText = `Join me in saving lives through blood donation! Sign up at https://blood-bank-management-system-pawr.onrender.com and become a hero today. Every donation can save up to 3 lives. #BloodDonation`;
+    const inviteUrl = `https://blood-bank-management-system-pawr.onrender.com/register/donor?ref=${donor._id}`;
+
+    // Track invite count (optional - could be stored in donor document)
+    const inviteCount = (donor.inviteCount || 0) + 1;
+    donor.inviteCount = inviteCount;
+    await donor.save();
+
+    res.status(200).json({
+      success: true,
+      inviteText,
+      inviteUrl,
+      inviteCount,
+      referralCode: donor._id.toString()
+    });
+  } catch (error) {
+    console.error("Invite friends error:", error);
+    res.status(500).json({ message: "Error inviting friends" });
+  }
+};
