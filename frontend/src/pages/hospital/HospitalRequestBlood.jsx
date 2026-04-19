@@ -20,14 +20,33 @@ const HospitalRequestBlood = () => {
       try {
         setLabsLoading(true);
         const token = localStorage.getItem("token");
+        
+        if (!token) {
+          console.error("No token found");
+          toast.error("Please login to continue");
+          setLabsLoading(false);
+          return;
+        }
+
+        console.log("Loading labs...");
         const res = await axios.get("https://blood-bank-management-system-backend-r7cp.onrender.com/api/facility/labs", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        
+        console.log("Labs response:", res.data);
         setLabs(res.data.labs || []);
-        console.log("Labs loaded:", res.data.labs);
+        console.log("Labs loaded:", res.data.labs?.length || 0);
       } catch (err) {
         console.error("Load labs error:", err);
-        toast.error("Failed to load blood labs");
+        console.error("Error response:", err.response?.data);
+        
+        if (err.response?.status === 401) {
+          toast.error("Authentication failed. Please login again.");
+        } else if (err.response?.status === 403) {
+          toast.error("Access denied. Hospital account required.");
+        } else {
+          toast.error(err.response?.data?.message || "Failed to load blood labs");
+        }
       } finally {
         setLabsLoading(false);
       }
@@ -176,6 +195,11 @@ const HospitalRequestBlood = () => {
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                   Sending Request...
                 </>
+              ) : labs.length === 0 ? (
+                <>
+                  <Send size={18} />
+                  No Labs Available
+                </>
               ) : (
                 <>
                   <Send size={18} />
@@ -183,6 +207,12 @@ const HospitalRequestBlood = () => {
                 </>
               )}
             </button>
+            
+            {labs.length === 0 && !labsLoading && (
+              <p className="text-sm text-red-600 text-center mt-2">
+                No approved blood labs available. Please contact admin to approve blood labs.
+              </p>
+            )}
           </form>
         </div>
 
