@@ -14,11 +14,19 @@ import Donor from "../models/donorModel.js";
  */
 export const hospitalRequestBlood = async (req, res) => {
   try {
+    console.log("🩸 Blood request received");
+    console.log("User:", req.user);
+    console.log("Body:", req.body);
+
     const hospitalId = req.user._id;
     const { labId, bloodType, units } = req.body;
 
+    console.log("Hospital ID:", hospitalId);
+    console.log("Request data:", { labId, bloodType, units });
+
     // Validation
     if (!labId || !bloodType || !units) {
+      console.log("❌ Validation failed: missing fields");
       return res.status(400).json({
         success: false,
         message: "Please provide labId, bloodType, and units"
@@ -26,6 +34,7 @@ export const hospitalRequestBlood = async (req, res) => {
     }
 
     if (units < 1) {
+      console.log("❌ Validation failed: units < 1");
       return res.status(400).json({
         success: false,
         message: "Units must be at least 1"
@@ -40,11 +49,14 @@ export const hospitalRequestBlood = async (req, res) => {
     });
 
     if (!lab) {
+      console.log("❌ Lab not found or not approved");
       return res.status(404).json({
         success: false,
         message: "Blood lab not found or not approved"
       });
     }
+
+    console.log("✅ Lab found:", lab.name);
 
     // Create blood request
     const request = await BloodRequest.create({
@@ -53,6 +65,8 @@ export const hospitalRequestBlood = async (req, res) => {
       bloodType,
       units
     });
+
+    console.log("✅ Blood request created:", request._id);
 
     // Add to hospital history
     await Facility.findByIdAndUpdate(hospitalId, {
@@ -73,10 +87,11 @@ export const hospitalRequestBlood = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Hospital Request Blood Error:", error);
+    console.error("❌ Hospital Request Blood Error:", error);
     res.status(500).json({ 
       success: false, 
-      message: "Error sending blood request" 
+      message: "Error sending blood request",
+      error: error.message 
     });
   }
 };
