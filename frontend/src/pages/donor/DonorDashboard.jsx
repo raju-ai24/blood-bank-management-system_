@@ -114,88 +114,136 @@ const DonorDashboard = () => {
     toast.success("Dashboard updated");
   };
 
-  const handleDownloadCertificate = () => {
+  const handleDownloadCertificate = async () => {
     if (history.length === 0) {
       toast.error("No donation history to generate certificate");
       return;
     }
     
-    // Generate certificate content
-    const certificateContent = `
-BLOOD DONATION CERTIFICATE
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/certificate`, {
+        method: "POST",
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
 
-This certificate is proudly presented to
+      if (!res.ok) {
+        throw new Error("Failed to generate certificate");
+      }
 
-${donor?.fullName || 'Donor'}
-
-In recognition of their contribution to saving lives through blood donation.
-
-Total Donations: ${history.length}
-Blood Type: ${donor?.bloodGroup || 'N/A'}
-Latest Donation: ${history[0]?.donationDate ? new Date(history[0].donationDate).toLocaleDateString() : 'N/A'}
-
-Issued on: ${new Date().toLocaleDateString()}
-Blood Bank Management System
-    `.trim();
-
-    // Create and download the certificate
-    const blob = new Blob([certificateContent], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `blood-donation-certificate-${donor?.fullName?.replace(/\s+/g, '-') || 'donor'}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-    
-    toast.success("Certificate downloaded successfully!");
+      const data = await res.json();
+      
+      // Create and download the certificate
+      const blob = new Blob([data.certificate], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = data.fileName || 'blood-donation-certificate.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success("Certificate downloaded successfully!");
+    } catch (error) {
+      console.error("Certificate download error:", error);
+      toast.error("Failed to download certificate");
+    }
   };
 
-  const handleShareAchievement = () => {
+  const handleShareAchievement = async () => {
     if (history.length === 0) {
       toast.error("No achievements to share yet");
       return;
     }
 
-    const shareText = `I've donated blood ${history.length} time${history.length > 1 ? 's' : ''} and saved up to ${history.length * 3} lives! Join me in making a difference. #BloodDonation #SaveLives`;
-    
-    // Try to use Web Share API if available
-    if (navigator.share) {
-      navigator.share({
-        title: 'My Blood Donation Achievement',
-        text: shareText,
-        url: window.location.href
-      }).catch((error) => {
-        console.log('Share failed:', error);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/share`, {
+        method: "POST",
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to share achievement");
+      }
+
+      const data = await res.json();
+      const shareText = data.shareText;
+      const shareUrl = data.shareUrl;
+
+      // Try to use Web Share API if available
+      if (navigator.share) {
+        navigator.share({
+          title: 'My Blood Donation Achievement',
+          text: shareText,
+          url: shareUrl
+        }).catch((error) => {
+          console.log('Share failed:', error);
+          // Fallback: copy to clipboard
+          navigator.clipboard.writeText(shareText);
+          toast.success("Achievement copied to clipboard!");
+        });
+      } else {
         // Fallback: copy to clipboard
         navigator.clipboard.writeText(shareText);
         toast.success("Achievement copied to clipboard!");
-      });
-    } else {
-      // Fallback: copy to clipboard
+      }
+    } catch (error) {
+      console.error("Share achievement error:", error);
+      // Fallback to client-side if backend fails
+      const shareText = `I've donated blood ${history.length} time${history.length > 1 ? 's' : ''} and saved up to ${history.length * 3} lives! Join me in making a difference. #BloodDonation #SaveLives`;
       navigator.clipboard.writeText(shareText);
       toast.success("Achievement copied to clipboard!");
     }
   };
 
-  const handleInviteFriends = () => {
-    const inviteText = `Join me in saving lives through blood donation! Sign up at ${window.location.origin} and become a hero today. Every donation can save up to 3 lives. #BloodDonation`;
-    
-    // Try to use Web Share API if available
-    if (navigator.share) {
-      navigator.share({
-        title: 'Join the Blood Donation Community',
-        text: inviteText,
-        url: window.location.origin
-      }).catch((error) => {
-        console.log('Share failed:', error);
+  const handleInviteFriends = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/invite`, {
+        method: "POST",
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to invite friends");
+      }
+
+      const data = await res.json();
+      const inviteText = data.inviteText;
+      const inviteUrl = data.inviteUrl;
+
+      // Try to use Web Share API if available
+      if (navigator.share) {
+        navigator.share({
+          title: 'Join the Blood Donation Community',
+          text: inviteText,
+          url: inviteUrl
+        }).catch((error) => {
+          console.log('Share failed:', error);
+          // Fallback: copy to clipboard
+          navigator.clipboard.writeText(inviteText);
+          toast.success("Invite link copied to clipboard!");
+        });
+      } else {
         // Fallback: copy to clipboard
         navigator.clipboard.writeText(inviteText);
         toast.success("Invite link copied to clipboard!");
-      });
-    } else {
-      // Fallback: copy to clipboard
+      }
+    } catch (error) {
+      console.error("Invite friends error:", error);
+      // Fallback to client-side if backend fails
+      const inviteText = `Join me in saving lives through blood donation! Sign up at ${window.location.origin} and become a hero today. Every donation can save up to 3 lives. #BloodDonation`;
       navigator.clipboard.writeText(inviteText);
       toast.success("Invite link copied to clipboard!");
     }
