@@ -31,6 +31,6 @@ router.get("/profile", protectFacility, getProfile);
  */
 router.put("/profile", protectFacility, updateProfile);
 
-router.get("/labs", protectFacility , getAllLabs);
+router.get("/labs", protectFacility, getAllLabs);
 
 export default router;
