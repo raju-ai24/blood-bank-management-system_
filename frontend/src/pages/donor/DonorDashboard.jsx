@@ -416,20 +416,27 @@ Blood Bank Management System
         subtitle="Manage your donor profile"
         className="mt-8"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <ActionCard
+            icon={<User className="w-5 h-5" />}
+            title="Manage Profile"
+            description="Update your donor profile"
+            onClick={() => navigate("/donor/profile")}
+            color="blue"
+          />
           <ActionCard
             icon={<Download className="w-5 h-5" />}
             title="Download Certificate"
             description="Get your donation certificate"
             onClick={() => handleDownloadCertificate()}
-            color="blue"
+            color="green"
           />
           <ActionCard
             icon={<Share2 className="w-5 h-5" />}
             title="Share Achievement"
             description="Share your impact with others"
             onClick={() => handleShareAchievement()}
-            color="green"
+            color="purple"
           />
           <ActionCard
             icon={<Calendar className="w-5 h-5" />}
@@ -443,7 +450,7 @@ Blood Bank Management System
             title="Invite Friends"
             description="Grow the donor community"
             onClick={() => handleInviteFriends()}
-            color="purple"
+            color="orange"
           />
         </div>
       </Section>
@@ -577,6 +584,7 @@ const ActionCard = ({ icon, title, description, onClick, color = "blue" }) => {
     green: "bg-green-50 text-green-600 hover:bg-green-100 border-green-200",
     red: "bg-red-50 text-red-600 hover:bg-red-100 border-red-200",
     purple: "bg-purple-50 text-purple-600 hover:bg-purple-100 border-purple-200",
+    orange: "bg-orange-50 text-orange-600 hover:bg-orange-100 border-orange-200",
   };
 
   return (
