@@ -11,7 +11,7 @@ const LabManageRequests = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const res = await axios.get("https://blood-bank-management-system-6e0d.onrender.com/api/blood-lab/blood/requests", {
+      const res = await axios.get("https://blood-bank-management-system-backend-r7cp.onrender.com/api/blood-lab/blood/requests", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRequests(res.data.requests || []);
@@ -32,7 +32,7 @@ const LabManageRequests = () => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `https://blood-bank-management-system-6e0d.onrender.com/api/blood-lab/blood/requests/${id}`,
+        `https://blood-bank-management-system-backend-r7cp.onrender.com/api/blood-lab/blood/requests/${id}`,
         { action },
         { headers: { Authorization: `Bearer ${token}` } }
       );

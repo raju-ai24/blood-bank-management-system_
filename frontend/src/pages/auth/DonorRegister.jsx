@@ -275,7 +275,7 @@ export default function DonorRegisterForm() {
       role: "donor",
     };
     
-        const API_URL = "https://blood-bank-management-system-6e0d.onrender.com/api/auth/register"; 
+        const API_URL = "https://blood-bank-management-system-backend-r7cp.onrender.com/api/auth/register"; 
 
     
     console.log("Submitting Donor Data:", submissionPayload);

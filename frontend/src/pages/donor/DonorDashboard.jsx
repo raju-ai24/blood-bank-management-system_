@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
-const API_URL = "https://blood-bank-management-system-6e0d.onrender.com/api/donor";
+const API_URL = "https://blood-bank-management-system-backend-r7cp.onrender.com/api/donor";
 
 const DonorDashboard = () => {
   const [dashboard, setDashboard] = useState(null);

@@ -34,7 +34,7 @@ const AdminDashboard = () => {
 
       console.log("🔄 Fetching admin dashboard stats...");
       
-      const res = await fetch("https://blood-bank-management-system-6e0d.onrender.com/api/admin/dashboard", {
+      const res = await fetch("https://blood-bank-management-system-backend-r7cp.onrender.com/api/admin/dashboard", {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'

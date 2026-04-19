@@ -12,7 +12,7 @@ const HospitalRequestHistory = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("token");
-        const res = await axios.get("https://blood-bank-management-system-6e0d.onrender.com/api/hospital/blood/requests", {
+        const res = await axios.get("https://blood-bank-management-system-backend-r7cp.onrender.com/api/hospital/blood/requests", {
           headers: { Authorization: `Bearer ${token}` },
         });
 

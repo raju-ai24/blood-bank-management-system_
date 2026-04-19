@@ -22,7 +22,7 @@ const BloodStock = () => {
   });
 
   const token = localStorage.getItem("token");
-  const API_URL = "https://blood-bank-management-system-6e0d.onrender.com/api/blood-lab";
+  const API_URL = "https://blood-bank-management-system-backend-r7cp.onrender.com/api/blood-lab";
 
   // Blood types for dropdown
   const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];

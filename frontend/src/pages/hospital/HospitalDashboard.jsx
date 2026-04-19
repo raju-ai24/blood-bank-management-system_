@@ -41,7 +41,7 @@ const HospitalDashboard = () => {
         }
 
         // Fetch hospital profile
-        const profileRes = await fetch("https://blood-bank-management-system-6e0d.onrender.com/api/facility/profile", {
+        const profileRes = await fetch("https://blood-bank-management-system-backend-r7cp.onrender.com/api/facility/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -61,12 +61,12 @@ const HospitalDashboard = () => {
         }
 
         // Fetch blood stock
-        const stockRes = await axios.get("https://blood-bank-management-system-6e0d.onrender.com/api/hospital/blood/stock", {
+        const stockRes = await axios.get("https://blood-bank-management-system-backend-r7cp.onrender.com/api/hospital/blood/stock", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         // Fetch blood requests
-        const requestsRes = await axios.get("https://blood-bank-management-system-6e0d.onrender.com/api/hospital/blood/requests", {
+        const requestsRes = await axios.get("https://blood-bank-management-system-backend-r7cp.onrender.com/api/hospital/blood/requests", {
           headers: { Authorization: `Bearer ${token}` },
         });
 

@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
-const API_URL = "https://blood-bank-management-system-6e0d.onrender.com/api/blood-lab";
+const API_URL = "https://blood-bank-management-system-backend-r7cp.onrender.com/api/blood-lab";
 
 const BloodLabDashboard = () => {
   const [dashboard, setDashboard] = useState(null);

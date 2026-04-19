@@ -26,7 +26,7 @@ const FacilityApproval = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   const token = localStorage.getItem("token");
-  const API_URL = "https://blood-bank-management-system-6e0d.onrender.com/api/admin";
+  const API_URL = "https://blood-bank-management-system-backend-r7cp.onrender.com/api/admin";
 
   // Fetch pending facilities
   const fetchPendingFacilities = async (showToast = false) => {

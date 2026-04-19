@@ -20,7 +20,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 
-const API_URL = "https://blood-bank-management-system-6e0d.onrender.com/api/admin";
+const API_URL = "https://blood-bank-management-system-backend-r7cp.onrender.com/api/admin";
 
 function GetAllDonors() {
   const [donors, setDonors] = useState([]);

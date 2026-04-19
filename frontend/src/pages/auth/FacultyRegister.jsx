@@ -294,7 +294,7 @@ export default function FacilityRegisterForm() {
   };
     
     // **YOUR TARGET URL**
-    const API_URL = "https://blood-bank-management-system-6e0d.onrender.com/api/auth/register"; 
+    const API_URL = "https://blood-bank-management-system-backend-r7cp.onrender.com/api/auth/register"; 
     
    console.log("Submitting Data to Backend:", submissionPayload); // Use the new payload
 

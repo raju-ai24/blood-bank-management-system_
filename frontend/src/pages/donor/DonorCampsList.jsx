@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 // NOTE: Ensure this URL matches your running backend API endpoint
-const API_BASE_URL = "https://blood-bank-management-system-6e0d.onrender.com/api";
+const API_BASE_URL = "https://blood-bank-management-system-backend-r7cp.onrender.com/api";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "All Camps" },
