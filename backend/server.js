@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: ["https://blood-bank-management-system-pawr.onrender.com", "http://localhost:5173", "https://blood-bank-management-system-6e0d.onrender.com"],
+  origin: ["https://blood-bank-management-system-pawr.onrender.com", "http://localhost:5173", "https://blood-bank-management-system-6e0d.onrender.com", "https://blood-bank-management-system-backend-r7cp.onrender.com"],
   credentials: true,
 }));
 
