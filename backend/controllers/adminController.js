@@ -1,5 +1,6 @@
 import Donor from "../models/donorModel.js";
 import Facility from "../models/facilityModel.js";
+import BloodCamp from "../models/bloodCampModel.js";
 
 // 🧩 Get Dashboard Overview Stats
 export const getDashboardStats = async (req, res) => {
@@ -73,7 +74,7 @@ export const approveFacility = async (req, res) => {
   }
 };
 
-// ❌ Reject / Update Facility Status to Rejected
+// Reject / Update Facility Status to Rejected
 export const rejectFacility = async (req, res) => {
   try {
     const facility = await Facility.findById(req.params.id);
@@ -93,5 +94,46 @@ export const rejectFacility = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error rejecting facility" });
+  }
+};
+
+// Get All Donations
+export const getAllDonations = async (req, res) => {
+  try {
+    const donors = await Donor.find({}, "fullName bloodGroup donationHistory");
+    const allDonations = [];
+    
+    donors.forEach(donor => {
+      if (donor.donationHistory && donor.donationHistory.length > 0) {
+        donor.donationHistory.forEach(donation => {
+          allDonations.push({
+            donorName: donor.fullName,
+            bloodGroup: donor.bloodGroup,
+            date: donation.date,
+            location: donation.location || 'N/A',
+            units: donation.units || 1
+          });
+        });
+      }
+    });
+    
+    allDonations.sort((a, b) => new Date(b.date) - new Date(a.date));
+    res.status(200).json({ donations: allDonations });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching donations" });
+  }
+};
+
+// Get All Camps
+export const getAllCamps = async (req, res) => {
+  try {
+    const camps = await BloodCamp.find()
+      .populate("hospital", "name address phone")
+      .sort({ date: -1 });
+    res.status(200).json({ camps });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching camps" });
   }
 };

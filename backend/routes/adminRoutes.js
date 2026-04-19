@@ -6,6 +6,8 @@ import {
   rejectFacility,
   getDashboardStats,
   getAllDonors,
+  getAllDonations,
+  getAllCamps,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -15,6 +17,8 @@ router.put("/facility/approve/:id",protect,  approveFacility);
 router.put("/facility/reject/:id", protect, rejectFacility);
 router.get("/dashboard", protect, getDashboardStats);
 router.get("/donors", getAllDonors);
+router.get("/donations", protect, getAllDonations);
+router.get("/camps", protect, getAllCamps);
 
 
 export default router;

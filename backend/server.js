@@ -39,6 +39,9 @@ app.use("/api/blood-lab", bloodLabRoutes);
 import hospitalRoutes from "./routes/hospitalRoutes.js";
 app.use("/api/hospital", hospitalRoutes);
 
+import campRoutes from "./routes/campRoutes.js";
+app.use("/api/camps", campRoutes);
+
 
 // 🏠 Root Route
 app.get("/", (req, res) => {
@@ -52,7 +55,8 @@ app.get("/", (req, res) => {
       facility: "/api/facility",
       admin: "/api/admin",
       bloodLab: "/api/blood-lab",
-      hospital: "/api/hospital"
+      hospital: "/api/hospital",
+      camps: "/api/camps"
     }
   });
 });
